@@ -1,0 +1,69 @@
+module Ex03 where
+
+import Data.List
+import Test.QuickCheck
+
+-- Consider the following six properties of the nub function:
+--
+-- 1. nub (nub xs) == nub xs
+-- 2. nub (x : nub xs) == nub (x : xs)
+-- 3. nub (xs ++ nub ys) == nub (xs ++ ys)
+-- 4. nub (x : x : xs) == nub (x : xs)
+-- 5. nub (xs ++ [x] ++ xs) = nub (xs ++ [x])
+-- 6. nub [x] == [x]
+
+-- Task 1. Implement a dodgy nub function that satisfies
+-- equations 1, 2, 3 and 6, but not 4, 5.
+-- Give counterexamples to properties 4,5, i.e. values
+-- (x,xs) for which equations 4 and 5 do not hold.
+
+dnub1236 :: (Eq a) => [a] -> [a]
+dnub1236 xs = xs
+
+dnub1236_c4 :: (Int, [Int]) -- (x,xs) failing eqn 4
+dnub1236_c4 = (1, [1, 2, 3])
+
+dnub1236_c5 :: (Int, [Int]) -- (x,xs) failing eqn 5
+dnub1236_c5 = (1, [1, 2, 3])
+
+-- Task 2. Implement a dodgy nub function that satisfies
+-- equations 1, 2, 3, 4, 5, but not 6.
+-- Give counterexamples.
+
+dnub12345 :: (Eq a) => [a] -> [a]
+dnub12345 xs = []
+
+dnub12345_c6 :: Int
+dnub12345_c6 = 3
+
+-- Task 3. Implement a dodgy nub function that satisfies
+-- equations 4, 5, 6, but not 1,2,3.
+-- Give counterexamples.
+
+dnub456 :: (Eq a) => [a] -> [a]
+dnub456 xs = dnubFn (nub xs)
+    where
+        dnubFn [] = []
+        dnubFn (x:xs) = xs ++ [x]
+
+dnub456_c1 :: [Int]
+dnub456_c1 = [1, 2, 2, 2, 3, 4]
+
+dnub456_c2 :: (Int,[Int])
+dnub456_c2 = (1, [1, 2, 2, 2, 3, 4])
+
+dnub456_c3 :: ([Int],[Int]) -- (xs,ys)
+dnub456_c3 = ([1, 1, 3, 5, 5], [2, 2, 4])
+
+-- Task 4. Implement a dodgy nub function that satisfies
+-- all the equations 1,2,3,4,5,6. (3 marks)
+
+dnub123456 :: (Eq a) => [a] -> [a]
+dnub123456 [] = []
+dnub123456 (x:xs) = x : dnub123456 (xs `intersect` [x])
+
+-- Show that dnub123456 is dodgy, i.e. give an input xs for which
+-- dnub123456 xs /= nub xs.
+dnub123456_c :: [Int]
+dnub123456_c = [1, 2, 2, 3, 3, 4]
+
